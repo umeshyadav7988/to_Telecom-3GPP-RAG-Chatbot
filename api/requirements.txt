@@ -1,5 +1,11 @@
 # Dependencies for the Vercel Python serverless function (api/index.py).
 #
+# Kept HERE and not at the repo root on purpose: a root requirements.txt makes
+# Vercel detect the whole repo as a Python backend-framework project, which
+# overrides the Vite build (buildCommand -> frontend/dist) declared in
+# vercel.json. Next to the entrypoint, @vercel/python still installs it for the
+# function while the root stays a plain static/Node build.
+#
 # Deliberately smaller than backend/requirements.txt: serverless bundles are
 # size-capped, and the ingest-only readers are imported lazily inside their
 # loader functions, so they are not needed to serve requests over a corpus of
