@@ -19,7 +19,11 @@ backend/requirements-ml.txt
 **/.pytest_cache/
 
 node_modules/
-frontend/dist/
+
+# frontend/dist/ must NOT be listed here: it is the outputDirectory declared in
+# vercel.json. Ignoring it leaves the deployment with no static assets, so every
+# path falls through the SPA rewrite into the Python function, and Flask answers
+# /index.html with its JSON 404 handler.
 
 docs/
 start.sh
