@@ -1,0 +1,146 @@
+3GPP TS 38.300 V17.7.0
+NR and NG-RAN Overall Description
+Stage 2
+Release 17
+
+NOTE ON THIS FILE: This is a condensed excerpt prepared for demonstration and
+testing of the retrieval pipeline. It preserves 3GPP clause numbering and
+terminology but is not the complete normative text. For normative use, consult
+the official publication at https://www.3gpp.org/ftp/Specs/archive/38_series/38.300/
+
+1 Scope
+The present document provides an overview and overall description of the NG-RAN and the NR radio interface. It describes the NG-RAN architecture, the radio protocol architecture, the physical layer, the layer 2 and layer 3 functions, and the main procedures.
+
+3 Abbreviations
+BWP Bandwidth Part
+CORESET Control Resource Set
+CSI Channel State Information
+DRB Data Radio Bearer
+MIB Master Information Block
+PRB Physical Resource Block
+SCS Subcarrier Spacing
+SIB System Information Block
+SRB Signalling Radio Bearer
+SSB SS/PBCH Block
+
+4 Overall architecture
+
+4.1 Overall architecture
+An NG-RAN node is either a gNB, providing NR user plane and control plane protocol terminations towards the UE; or an ng-eNB, providing E-UTRA user plane and control plane protocol terminations towards the UE. The gNBs and ng-eNBs are interconnected with each other by means of the Xn interface. The gNBs and ng-eNBs are also connected by means of the NG interfaces to the 5GC, more specifically to the AMF by means of the NG-C interface and to the UPF by means of the NG-U interface.
+
+4.3 Radio protocol architecture
+
+4.3.1 User plane
+The user plane protocol stack consists of the SDAP, PDCP, RLC and MAC sublayers, terminated in the gNB on the network side. The SDAP sublayer performs the mapping between a QoS flow and a data radio bearer, and marks the QoS Flow ID in both downlink and uplink packets.
+
+4.3.2 Control plane
+The control plane protocol stack consists of the NAS, RRC, PDCP, RLC and MAC layers. The RRC sublayer is terminated in the gNB and performs broadcast of system information, paging, establishment, maintenance and release of an RRC connection, security functions including key management, and measurement configuration and reporting.
+
+5 Physical layer
+
+5.1 Waveform, numerology and frame structure
+The downlink and uplink transmission scheme is based on OFDM with a cyclic prefix. For the uplink, DFT-spread OFDM with a cyclic prefix is additionally supported and is limited to a single stream transmission.
+
+Multiple OFDM numerologies are supported, given by the subcarrier spacing and the cyclic prefix. The subcarrier spacing is derived as SCS = 15 * 2^u kHz, where u is the numerology index.
+
+u | Subcarrier spacing | Cyclic prefix | Supported for data | Supported for synchronisation
+0 | 15 kHz | Normal | Yes | Yes
+1 | 30 kHz | Normal | Yes | Yes
+2 | 60 kHz | Normal, Extended | Yes | No
+3 | 120 kHz | Normal | Yes | Yes
+4 | 240 kHz | Normal | No | Yes
+
+Downlink and uplink transmissions are organised into frames with a duration of 10 ms, each consisting of ten subframes of 1 ms. Each subframe consists of a number of consecutive slots, and the number of slots per subframe depends on the numerology: one slot per subframe for 15 kHz SCS, two slots for 30 kHz, four slots for 60 kHz, eight slots for 120 kHz. A slot consists of 14 OFDM symbols for normal cyclic prefix.
+
+5.1.1 Frequency ranges
+NR operates in two frequency ranges. Frequency Range 1 (FR1) covers 410 MHz to 7125 MHz. Frequency Range 2 (FR2) covers 24250 MHz to 52600 MHz. The maximum channel bandwidth is 100 MHz in FR1 and 400 MHz in FR2. The maximum number of physical resource blocks in a carrier is 275.
+
+5.1.2 Bandwidth parts
+A Bandwidth Part is a subset of contiguous common resource blocks for a given numerology on a given carrier. The UE can be configured with up to four BWPs in the downlink and up to four BWPs in the uplink, with a single downlink BWP and a single uplink BWP being active at a given time. The UE is not expected to receive PDSCH, PDCCH or CSI-RS outside an active BWP.
+
+Bandwidth adaptation is achieved by configuring the UE with BWPs and telling the UE which of the configured BWPs is currently the active one. This allows a UE to operate with a narrow bandwidth when the traffic demand is low, saving power, and to widen the bandwidth when needed.
+
+5.2 Synchronisation and system information
+
+5.2.1 SS/PBCH block
+The SS/PBCH block consists of the primary synchronisation signal, the secondary synchronisation signal and the PBCH. The SSB spans four OFDM symbols in the time domain and 240 contiguous subcarriers, that is 20 physical resource blocks, in the frequency domain. SSBs are transmitted in an SS burst set confined to a 5 ms half-frame window.
+
+5.2.2 System information
+System information is divided into the MIB and a number of SIBs. The MIB is carried on the PBCH with a periodicity of 80 ms and is repeated within 80 ms. It includes parameters needed to acquire SIB1 from the cell. SIB1 is transmitted on the DL-SCH with a periodicity of 160 ms and variable transmission repetition periodicity within 160 ms; it defines the scheduling of other system information blocks and contains information required for initial access.
+
+Other SIBs are carried in SI messages transmitted on the DL-SCH. SIB2 contains cell reselection information common for intra-frequency, inter-frequency and inter-RAT. SIB3 contains information about the serving frequency and intra-frequency neighbouring cells. SIB4 contains information about other NR frequencies and inter-frequency neighbouring cells. SIB5 contains information about E-UTRA frequencies and neighbouring cells.
+
+6 Layer 2
+
+6.1 Overview
+Layer 2 of NR is split into the following sublayers: Medium Access Control, Radio Link Control, Packet Data Convergence Protocol and Service Data Adaptation Protocol.
+
+6.2 MAC sublayer
+The main services and functions of the MAC sublayer include mapping between logical channels and transport channels, multiplexing and demultiplexing of MAC SDUs, scheduling information reporting, error correction through HARQ, logical channel prioritisation, and priority handling between UEs by means of dynamic scheduling.
+
+6.3 RLC sublayer
+The RLC sublayer supports three transmission modes: Transparent Mode, Unacknowledged Mode and Acknowledged Mode. The RLC configuration is per logical channel with no dependency on numerologies or transmission durations. The main services and functions include transfer of upper layer PDUs, sequence numbering independent of the one in PDCP, error correction through ARQ in AM only, segmentation and re-segmentation, and duplicate detection.
+
+6.4 PDCP sublayer
+The main services and functions of the PDCP sublayer include sequence numbering, header compression using ROHC and decompression, transfer of user data, reordering and duplicate detection, PDCP PDU routing for split bearers, retransmission of PDCP SDUs, ciphering, deciphering and integrity protection, PDCP SDU discard, and duplication.
+
+6.5 SDAP sublayer
+The main services and functions of SDAP include the mapping between a QoS flow and a data radio bearer, and the marking of the QoS Flow ID in both DL and UL packets. A single protocol entity of SDAP is configured for each individual PDU session, except for Dual Connectivity where two entities can be configured.
+
+7 RRC
+
+7.1 Services and functions
+The main services and functions of the RRC sublayer include broadcast of system information; paging initiated by the 5GC or NG-RAN; establishment, maintenance and release of an RRC connection; security functions including key management; establishment, configuration, maintenance and release of Signalling Radio Bearers and Data Radio Bearers; mobility functions; QoS management functions; UE measurement reporting and control of the reporting; and detection of and recovery from radio link failure.
+
+7.2 RRC states
+A UE is either in RRC_CONNECTED state or in RRC_INACTIVE state when an RRC connection has been established. If this is not the case, that is, no RRC connection is established, the UE is in RRC_IDLE state.
+
+7.2.1 RRC_IDLE
+In RRC_IDLE, the UE performs PLMN selection, cell selection and reselection, and monitors a paging channel for CN-initiated paging. DRX for CN paging is configured by NAS. There is no UE context stored in the NG-RAN, and no RRC connection exists.
+
+7.2.2 RRC_INACTIVE
+In RRC_INACTIVE, the UE context is stored in the NG-RAN and in the UE, and the NG-RAN knows the RNA to which the UE belongs. The UE monitors a paging channel for both CN-initiated and RAN-initiated paging, performs neighbouring cell measurements and cell reselection, and performs an RNA update when moving outside the configured RAN-based notification area. The connection between the NG-RAN and the 5GC, that is the NG connection, is kept alive for the UE, which is what allows a fast transition back to RRC_CONNECTED without core network signalling.
+
+7.2.3 RRC_CONNECTED
+In RRC_CONNECTED, the UE context is stored in the NG-RAN and in the UE. The NG-RAN knows the cell to which the UE belongs. Transfer of unicast data to and from the UE takes place, and the network controls UE mobility through handover. The UE monitors a paging channel and short messages, monitors control channels associated with the shared data channel, provides channel quality and feedback information, and performs neighbouring cell measurements and measurement reporting.
+
+7.3 Transitions between RRC states
+The following transitions are supported: RRC_IDLE to RRC_CONNECTED via the RRC connection establishment procedure; RRC_CONNECTED to RRC_IDLE via the RRC connection release procedure; RRC_CONNECTED to RRC_INACTIVE via the RRC connection release with suspend configuration; RRC_INACTIVE to RRC_CONNECTED via the RRC connection resume procedure; and RRC_INACTIVE to RRC_IDLE via the RRC connection release procedure.
+
+9 Mobility and state transitions
+
+9.2 Intra-NR mobility
+
+9.2.3 Handover
+The handover procedure is UE-assisted and network-controlled. The source gNB initiates the handover by sending a Handover Request over the Xn interface to the target gNB. The target gNB performs admission control and provides the RRC configuration as part of the Handover Request Acknowledge. The source gNB then provides the RRC configuration to the UE in a Handover Command, which is an RRCReconfiguration message including reconfigurationWithSync.
+
+9.2.4 Measurement configuration and reporting
+The network configures the UE to perform measurements and to report them either periodically or when a reporting event is triggered. The following measurement reporting events are defined for intra-RAT mobility in NR:
+Event A1: Serving becomes better than absolute threshold.
+Event A2: Serving becomes worse than absolute threshold.
+Event A3: Neighbour becomes amount of offset better than PCell/PSCell.
+Event A4: Neighbour becomes better than absolute threshold.
+Event A5: PCell/PSCell becomes worse than absolute threshold1 AND Neighbour becomes better than another absolute threshold2.
+Event A6: Neighbour becomes amount of offset better than SCell.
+
+For inter-RAT mobility the following events are defined:
+Event B1: Inter-RAT neighbour becomes better than absolute threshold.
+Event B2: PCell becomes worse than absolute threshold1 AND inter-RAT neighbour becomes better than another absolute threshold2.
+
+Two hysteresis mechanisms limit the number of reports: a hysteresis value applied to the entering and leaving conditions, and a time-to-trigger during which the entering condition must be continuously satisfied before the event is reported.
+
+9.2.6 Radio Link Failure
+The UE declares radio link failure when any of the following occurs: expiry of timer T310 started upon detection of physical layer problems; expiry of timer T312; random access procedure failure; RLC failure after the maximum number of retransmissions is reached; or failure of the reconfiguration with sync. Upon declaring radio link failure, the UE initiates the RRC re-establishment procedure if security has been activated, and otherwise moves to RRC_IDLE.
+
+9.3 Random access procedure
+The random access procedure is triggered by initial access from RRC_IDLE, RRC re-establishment, handover, downlink or uplink data arrival during RRC_CONNECTED when uplink synchronisation status is non-synchronised, transition from RRC_INACTIVE, request for other system information, and beam failure recovery.
+
+Two types of random access are supported: four-step random access, in which the UE transmits a preamble on the PRACH and receives a random access response before transmitting Msg3 and receiving Msg4; and two-step random access, in which the UE transmits MsgA consisting of a preamble and a PUSCH payload and receives MsgB.
+
+16 Other features
+
+16.1 Network slicing in NG-RAN
+The NG-RAN supports network slicing by means of resource management between slices, support of QoS differentiation within a slice, and RAN selection of the AMF. The NG-RAN is informed of the S-NSSAI of a PDU session at PDU session resource setup, and uses that information for slice-aware admission control and radio resource management.
+
+16.3 Bandwidth adaptation and power saving
+Connected mode DRX allows a UE in RRC_CONNECTED to discontinuously monitor the PDCCH. The DRX cycle consists of an On Duration during which the UE monitors PDCCH and an opportunity for DRX during which the UE may skip PDCCH monitoring. The network configures the DRX parameters including drx-onDurationTimer, drx-InactivityTimer, drx-LongCycle and optionally a short DRX cycle.

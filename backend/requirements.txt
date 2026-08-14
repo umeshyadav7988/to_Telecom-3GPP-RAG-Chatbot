@@ -1,0 +1,27 @@
+# ---- Core (required) -------------------------------------------------------
+Flask==3.0.3
+flask-cors==4.0.1
+python-dotenv==1.0.1
+numpy>=1.26.0
+requests>=2.31.0
+pypdf>=4.2.0
+python-docx>=1.1.2
+
+# ---- LLM providers ---------------------------------------------------------
+# Both are installed for convenience, but NEITHER is required: with no API key
+# the app runs in extractive mode, and each SDK is imported lazily inside its
+# own client class. Drop whichever you don't use.
+#
+#   GEMINI_API_KEY    -> google-genai   (default when both keys are present)
+#   ANTHROPIC_API_KEY -> anthropic
+#
+# Force one with LLM_PROVIDER=gemini|anthropic.
+google-genai>=1.0.0
+anthropic>=0.69.0
+
+# ---- Optional, installed separately via requirements-ml.txt ----------------
+# sentence-transformers  -> better dense embeddings + cross-encoder reranking
+# faiss-cpu              -> ANN index for large corpora
+#
+# The system runs WITHOUT them (deterministic lexical-semantic fallback),
+# so `pip install -r requirements.txt` is enough to boot the app.

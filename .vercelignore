@@ -1,0 +1,28 @@
+# Keep the serverless bundle small and the build fast.
+# NOTE: backend/data/corpus/ must NOT be ignored — the index is rebuilt from it
+# on every cold start (AUTO_INDEX_ON_BOOT).
+
+# backend/eval/ is intentionally NOT ignored: /api/evaluation imports
+# eval.metrics and reads eval/golden_set.json at request time.
+
+backend/.venv/
+backend/tests/
+backend/scripts/
+backend/data/index/
+backend/data/*.db
+backend/data/*.db-wal
+backend/data/*.db-shm
+backend/requirements-ml.txt
+
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+
+node_modules/
+frontend/dist/
+
+docs/
+start.sh
+.git/
+.gitignore
+README.md

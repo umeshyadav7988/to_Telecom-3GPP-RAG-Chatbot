@@ -1,0 +1,10 @@
+# Optional quality upgrade. Pulls in PyTorch (~2 GB), so it is kept separate
+# from the base install. Enable with:  pip install -r requirements-ml.txt
+#
+# Once installed the app auto-detects and uses:
+#   * BAAI/bge-small-en-v1.5                  -> dense embeddings
+#   * cross-encoder/ms-marco-MiniLM-L-6-v2    -> reranking
+# No config change is needed; see app/rag/embeddings.py and app/rag/reranker.py.
+
+sentence-transformers>=3.0.0
+faiss-cpu>=1.8.0

@@ -1,0 +1,178 @@
+3GPP TS 24.501 V17.9.0
+Non-Access-Stratum (NAS) protocol for 5G System (5GS)
+Stage 3
+Release 17
+
+NOTE ON THIS FILE: This is a condensed excerpt prepared for demonstration and
+testing of the retrieval pipeline. It preserves 3GPP clause numbering and
+terminology but is not the complete normative text. For normative use, consult
+the official publication at https://www.3gpp.org/ftp/Specs/archive/24_series/24.501/
+
+1 Scope
+The present document specifies the procedures used by the protocols for mobility management and session management between the User Equipment and the Access and Mobility Management Function over the N1 reference point. It specifies the 5GS Mobility Management protocol and the 5GS Session Management protocol.
+
+4 General
+
+4.4 NAS security
+
+4.4.2 Handling of 5G NAS security contexts
+The UE and the AMF shall handle 5G NAS security contexts as specified in this clause. A 5G NAS security context is identified by an ngKSI. The 5G NAS security context can be either a native 5G NAS security context, created by a primary authentication and key agreement procedure, or a mapped 5G NAS security context, created by mapping from an EPS security context.
+
+4.4.3 Handling of NAS COUNT and NAS sequence number
+Each 5G NAS security context shall be associated with two separate counters NAS COUNT: one related to uplink NAS messages and one related to downlink NAS messages. The NAS COUNT is a 24-bit value consisting of a NAS sequence number of 8 bits and a NAS overflow counter of 16 bits. The UE and the AMF shall discard a received NAS message if the NAS COUNT would wrap around.
+
+5 Elementary procedures for 5GS mobility management
+
+5.1 Overview
+
+5.1.3 5GMM sublayer states
+
+5.1.3.2 5GMM sublayer states in the UE
+The 5GMM sublayer of the UE can be in one of the following main states:
+5GMM-NULL: 5GS services are disabled in the UE. No 5GS mobility management function shall be performed in this state.
+5GMM-DEREGISTERED: The UE is not registered for 5GS services. No 5GMM context has been established or the 5GMM context is marked as invalid.
+5GMM-REGISTERED-INITIATED: The UE has sent a REGISTRATION REQUEST message for initial registration and is waiting for a response from the AMF.
+5GMM-REGISTERED: A 5GMM context has been established and a default PDU session may have been established.
+5GMM-DEREGISTERED-INITIATED: The UE has requested release of the 5GMM context by sending a DEREGISTRATION REQUEST message and is waiting for a response from the AMF.
+5GMM-SERVICE-REQUEST-INITIATED: The UE has sent a SERVICE REQUEST message and is waiting for a response from the AMF.
+
+5.5 5GMM specific procedures
+
+5.5.1 Registration procedure
+
+5.5.1.1 General
+The registration procedure is used by the UE to get authorised to receive services, to enable mobility tracking, to enable reachability, and to update the network with UE capabilities. The registration procedure is always initiated by the UE. The UE initiates the registration procedure by sending a REGISTRATION REQUEST message to the AMF.
+
+The registration procedure is used for the following purposes:
+a) initial registration to the 5GS;
+b) mobility registration update upon changing to a new tracking area outside the UE's registration area in the connected mode or in the idle mode, when the UE has to update its capabilities or protocol parameters;
+c) periodic registration update, triggered by expiry of timer T3512;
+d) emergency registration, when the UE needs to receive emergency services;
+e) SNPN onboarding registration; and
+f) disaster roaming initial registration.
+
+5.5.1.2 Registration procedure for initial registration
+
+5.5.1.2.2 Initial registration initiation
+The UE initiates the registration procedure for initial registration by sending a REGISTRATION REQUEST message to the AMF with the 5GS registration type IE indicating "initial registration". The UE shall start timer T3510. If the UE is not registered and has no valid 5G-GUTI, the UE shall include the SUCI in the 5GS mobile identity IE.
+
+5.5.1.2.4 Initial registration accepted by the network
+If the registration request has been accepted by the network, the AMF shall send a REGISTRATION ACCEPT message to the UE. The UE, upon receiving the REGISTRATION ACCEPT message, shall stop timer T3510 and reset the registration attempt counter, enter state 5GMM-REGISTERED and set the 5GS update status to 5U1 UPDATED.
+
+If the REGISTRATION ACCEPT message contains a 5G-GUTI, the UE shall return a REGISTRATION COMPLETE message to the AMF to acknowledge the received 5G-GUTI, and shall stop timer T3519 if running. The AMF shall start timer T3550 when sending the 5G-GUTI, and shall stop it upon receipt of the REGISTRATION COMPLETE message.
+
+5.5.1.2.5 Initial registration not accepted by the network
+If the registration request cannot be accepted by the network, the AMF shall send a REGISTRATION REJECT message to the UE including an appropriate 5GMM cause value. The UE shall stop timer T3510, enter state 5GMM-DEREGISTERED and take actions depending on the received 5GMM cause value.
+
+5.5.1.2.7 Abnormal cases in the UE
+The following abnormal cases can be identified:
+a) Timer T3510 expiry. The UE shall abort the registration procedure and proceed as described below. The registration attempt counter shall be incremented, unless it was already set to 5.
+b) Lower layer failure or release of the NAS signalling connection before the REGISTRATION ACCEPT or REGISTRATION REJECT message is received. The registration attempt counter shall be incremented.
+
+If the registration attempt counter is less than 5, the UE shall start timer T3511. If the registration attempt counter is equal to 5, the UE shall start timer T3502, and shall set the 5GS update status to 5U2 NOT UPDATED.
+
+5.5.1.3 Registration procedure for mobility and periodic registration update
+
+5.5.1.3.1 General
+The mobility and periodic registration update procedure is used by a UE in state 5GMM-REGISTERED to update the registration of the actual tracking area with the network, to periodically notify the availability of the UE to the network, or to update certain UE capabilities or parameters negotiated during the registration procedure.
+
+5.5.1.3.2 Mobility and periodic registration update initiation
+The UE in state 5GMM-REGISTERED shall initiate the registration procedure for mobility and periodic registration update by sending a REGISTRATION REQUEST message to the AMF. The UE shall set the 5GS registration type IE to "mobility registration updating" or "periodic registration updating" as appropriate, and shall start timer T3510.
+
+The UE shall initiate this procedure when the periodic registration update timer T3512 expires, and when the UE detects entering a tracking area that is not in the list of tracking areas that the UE previously received from the network.
+
+5.5.2 De-registration procedure
+
+5.5.2.2 UE-initiated de-registration
+The UE-initiated de-registration procedure is initiated by the UE sending a DEREGISTRATION REQUEST message to the AMF. The UE shall start timer T3521 and enter the state 5GMM-DEREGISTERED-INITIATED. If the De-registration type IE indicates "switch off", the UE does not wait for a DEREGISTRATION ACCEPT message before entering the 5GMM-DEREGISTERED state.
+
+5.6 5GMM connection management procedures
+
+5.6.1 Service request procedure
+
+5.6.1.1 General
+The purpose of the service request procedure is to change the 5GMM mode from idle mode to connected mode, and to request the establishment of user-plane resources for PDU sessions. The service request procedure is used by a UE in 5GMM-IDLE mode to request the establishment of a secure connection to an AMF, and is also used to respond to a paging request from the network.
+
+5.6.1.2 Service request procedure initiation
+The UE shall initiate the service request procedure by sending a SERVICE REQUEST message or a CONTROL PLANE SERVICE REQUEST message to the AMF, and shall start timer T3517. The UE shall include the 5G-S-TMSI in the message.
+
+5.6.1.5 Abnormal cases in the UE
+Timer T3517 expiry: the UE shall abort the service request procedure and release the established NAS signalling connection locally, and enter 5GMM-REGISTERED. The service request attempt counter shall be incremented.
+
+5.4 5GMM common procedures
+
+5.4.1 Primary authentication and key agreement procedure
+
+5.4.1.3 EAP based primary authentication and key agreement procedure
+The AMF initiates the EAP based primary authentication and key agreement procedure by sending an AUTHENTICATION REQUEST message including an EAP-request message. The UE responds with an AUTHENTICATION RESPONSE message including an EAP-response message. The AMF shall start timer T3560 when sending the AUTHENTICATION REQUEST message.
+
+5.4.2 Security mode control procedure
+
+5.4.2.2 NAS security mode control initiation by the network
+The AMF initiates the NAS security mode control procedure by sending a SECURITY MODE COMMAND message to the UE and starting timer T3560. The AMF shall reset the downlink NAS COUNT counter and use it to integrity protect the initial SECURITY MODE COMMAND message if the security mode control procedure is initiated to take a 5G NAS security context into use.
+
+5.4.2.3 NAS security mode command accepted by the UE
+Upon receipt of the SECURITY MODE COMMAND message, the UE shall check whether the security mode command can be accepted. If accepted, the UE shall send a SECURITY MODE COMPLETE message integrity protected and ciphered with the selected 5G NAS security algorithms.
+
+5.4.4 Identification procedure
+The purpose of the identification procedure is to request a particular UE to provide specific identification parameters, for example the SUCI or the PEI. The AMF initiates the identification procedure by sending an IDENTITY REQUEST message to the UE and starting timer T3570. The UE shall respond with an IDENTITY RESPONSE message.
+
+6 Elementary procedures for 5GS session management
+
+6.4 UE-requested 5GSM procedures
+
+6.4.1 UE-requested PDU session establishment procedure
+
+6.4.1.1 General
+The purpose of the UE-requested PDU session establishment procedure is to establish a new PDU session with the network, to establish user-plane resources, or to perform a handover of an existing PDU session between 3GPP access and non-3GPP access.
+
+6.4.1.2 UE-requested PDU session establishment procedure initiation
+In order to initiate the UE-requested PDU session establishment procedure, the UE shall create a PDU SESSION ESTABLISHMENT REQUEST message, allocate a PDU session identity that is not currently used, and start timer T3580. The UE shall send the PDU SESSION ESTABLISHMENT REQUEST message within a UL NAS TRANSPORT message including the Request type, the S-NSSAI and the DNN.
+
+6.4.1.3 UE-requested PDU session establishment procedure accepted by the network
+Upon receipt of a PDU SESSION ESTABLISHMENT ACCEPT message, the UE shall stop timer T3580 and consider the PDU session as established. The PDU SESSION ESTABLISHMENT ACCEPT message includes the selected PDU session type, the authorized QoS rules, the session-AMBR and, for IP PDU session types, the PDU address.
+
+10 Timer handling
+
+10.2 Timers of 5GS mobility management
+
+10.2.1 Timers of 5GS mobility management in the UE
+The following table lists the 5GS mobility management timers used in the UE, with their default values and the state in which they are running.
+
+Timer | Default value | Cause of start | Normal stop | On expiry
+T3502 | 12 minutes | At registration failure and the attempt counter is equal to 5 | Registration or de-registration procedure initiated | Initiation of the registration procedure
+T3510 | 15 s | Transmission of REGISTRATION REQUEST message | REGISTRATION ACCEPT or REGISTRATION REJECT message received | Start T3511 or T3502
+T3511 | 10 s | Registration failure due to lower layer failure, T3510 timeout or registration rejected with other 5GMM cause values | REGISTRATION ACCEPT or REGISTRATION REJECT message received | Restart of the registration procedure
+T3512 | 54 minutes | In 5GMM-REGISTERED, when the UE enters 5GMM-IDLE mode | When entering state 5GMM-DEREGISTERED or when entering 5GMM-CONNECTED mode | Initiation of the periodic registration procedure
+T3516 | 30 s | RAND and RES stored as a result of a 5G AKA based primary authentication | SECURITY MODE COMMAND received, SERVICE REQUEST sent, or the UE enters 5GMM-DEREGISTERED | Delete the stored RAND and RES
+T3517 | 15 s | SERVICE REQUEST message sent | SERVICE ACCEPT or SERVICE REJECT received, or 5GMM-CONNECTED mode entered | Abort the procedure and release the NAS signalling connection
+T3519 | 60 s | The UE sends a SUCI in a message | The UE receives a new 5G-GUTI in a REGISTRATION ACCEPT or CONFIGURATION UPDATE COMMAND | Delete the stored SUCI
+T3520 | 15 s | AUTHENTICATION RESPONSE with a synch failure or MAC failure sent | AUTHENTICATION REQUEST or AUTHENTICATION REJECT received, or the UE enters 5GMM-IDLE | Consider the network to have failed the authentication check
+T3521 | 15 s | DEREGISTRATION REQUEST message sent | DEREGISTRATION ACCEPT message received | Retransmission of the DEREGISTRATION REQUEST message, up to 5 times
+T3525 | 60 s | Registration reject or service reject with 5GMM cause #28 or #31 | On entering 5GMM-DEREGISTERED | The UE may initiate the registration procedure
+T3540 | 10 s | REGISTRATION REJECT, SERVICE REJECT or DEREGISTRATION REQUEST received with 5GMM cause value and no NAS signalling connection release | Release of the NAS signalling connection | Release of the NAS signalling connection
+
+10.2.2 Timers of 5GS mobility management in the network
+Timer | Default value | Cause of start | Normal stop | On expiry
+T3513 | Network dependent | Paging procedure initiated | Paging procedure completed | Network dependent
+T3550 | 6 s | REGISTRATION ACCEPT message with 5G-GUTI sent | REGISTRATION COMPLETE message received | Retransmission of REGISTRATION ACCEPT, up to 4 times
+T3555 | 6 s | CONFIGURATION UPDATE COMMAND with acknowledgement requested sent | CONFIGURATION UPDATE COMPLETE received | Retransmission, up to 4 times
+T3560 | 6 s | AUTHENTICATION REQUEST or SECURITY MODE COMMAND sent | AUTHENTICATION RESPONSE, AUTHENTICATION FAILURE, SECURITY MODE COMPLETE or SECURITY MODE REJECT received | Retransmission, up to 4 times
+T3570 | 6 s | IDENTITY REQUEST message sent | IDENTITY RESPONSE message received | Retransmission of the IDENTITY REQUEST, up to 4 times
+
+Annex A (informative): Cause values for 5GS mobility management
+
+A.1 Causes related to UE identification
+#3 Illegal UE. This 5GMM cause is sent to the UE when the network refuses service to the UE either because an identity of the UE is not acceptable to the network or because the UE does not pass the authentication check.
+#6 Illegal ME. This 5GMM cause is sent to the UE if the ME used is not acceptable to the network, for example because it is on a blacklist.
+#5 PEI not accepted. This 5GMM cause is sent to the UE if the network does not accept an emergency registration using a PEI.
+
+A.2 Cause related to subscription options
+#7 5GS services not allowed. This 5GMM cause is sent to the UE when it is not allowed to operate 5GS services.
+#11 PLMN not allowed. This 5GMM cause is sent to the UE if it requests service, or if the network initiates a de-registration request, in a PLMN where the UE, by subscription or due to operator determined barring, is not allowed to operate.
+#12 Tracking area not allowed. This 5GMM cause is sent to the UE if it requests service in a tracking area where the HPLMN determines that the UE, by subscription, is not allowed to operate.
+#13 Roaming not allowed in this tracking area. This 5GMM cause is sent to a UE which requests service in a tracking area of a PLMN which offers roaming to that UE, but not in that tracking area.
+
+A.3 Causes related to PLMN specific network failures and congestion
+#22 Congestion. This 5GMM cause is sent to the UE if the requested service cannot be provided due to congestion, for example a maximum number of PDU sessions reached, or congestion control applied.
+#27 N1 mode not allowed. This 5GMM cause is sent to the UE if it requests service in a PLMN where the UE is not allowed to use N1 mode.

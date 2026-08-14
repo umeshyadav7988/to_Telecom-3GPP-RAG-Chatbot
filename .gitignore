@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Secrets
+.env
+!.env.example
+
+# Generated index and database (rebuild with scripts/ingest.py)
+backend/data/index/
+backend/data/*.db
+backend/data/*.db-wal
+backend/data/*.db-shm
+
+# Downloaded 3GPP specifications — large, and fetchable via scripts/download_3gpp.py.
+# The bundled condensed .txt corpus IS tracked (see the negations below).
+backend/data/corpus/*
+!backend/data/corpus/23501-5gs-architecture.txt
+!backend/data/corpus/23502-5gs-procedures.txt
+!backend/data/corpus/24501-nas-5gs.txt
+!backend/data/corpus/33501-5g-security.txt
+!backend/data/corpus/38300-nr-overall.txt
+
+# Evaluation output
+backend/report.json
+backend/eval/*.json
+!backend/eval/golden_set.json
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

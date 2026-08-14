@@ -1,0 +1,120 @@
+3GPP TS 23.502 V17.9.0
+Procedures for the 5G System (5GS)
+Stage 2
+Release 17
+
+NOTE ON THIS FILE: This is a condensed excerpt prepared for demonstration and
+testing of the retrieval pipeline. It preserves 3GPP clause numbering and
+terminology but is not the complete normative text. For normative use, consult
+the official publication at https://www.3gpp.org/ftp/Specs/archive/23_series/23.502/
+
+1 Scope
+The present document specifies the Stage 2 procedures for the 5G System, complementing the architecture defined in TS 23.501. It describes the signalling flows between the network functions of the 5G Core Network and between the 5GC and the access network.
+
+4 Procedures
+
+4.2 Connection, Registration and Mobility Management procedures
+
+4.2.2 Registration Management procedures
+
+4.2.2.2 Registration procedures
+
+4.2.2.2.1 General
+The UE needs to register with the network to get authorised to receive services, to enable mobility tracking and to enable reachability. The registration procedure is used when the UE performs an initial registration to the 5G System, when the UE performs a mobility registration update upon changing to a new tracking area outside the UE's registration area, and when the UE performs a periodic registration update.
+
+4.2.2.2.2 General Registration
+The general registration procedure comprises the following steps.
+
+Step 1. The UE sends an AN message to the (R)AN containing AN parameters and a Registration Request. The Registration Request includes the Registration type, the SUCI or the 5G-GUTI or the PEI, the last visited TAI if available, the Security parameters, the Requested NSSAI, the UE 5GC Capability, the PDU Session status and the List of PDU Sessions To Be Activated.
+
+Step 2. If the SUCI is included, or the 5G-GUTI does not indicate a valid AMF, the (R)AN selects an AMF based on the RAN parameters and the local policy. If the UE is in CM-CONNECTED state, the (R)AN forwards the Registration Request to the AMF that already has the UE context.
+
+Step 3. The (R)AN sends an N2 message to the AMF containing the N2 parameters and the Registration Request. When NG-RAN is used, the N2 parameters include the selected PLMN ID, the Location Information and the Cell Identity related to the cell in which the UE is camping, and the UE Context Request.
+
+Steps 4 to 5. If the AMF has changed since the last registration, the new AMF may invoke the Namf_Communication_UEContextTransfer service operation on the old AMF including the complete Registration Request message to request the UE's SUPI and the UE Context. The old AMF responds with the SUPI and the UE context.
+
+Steps 6 to 7. If the SUPI is not provided by the UE nor retrieved from the old AMF, the AMF initiates the Identity Request procedure by sending an Identity Request message to the UE requesting the SUCI. The UE responds with an Identity Response message including the SUCI.
+
+Steps 8 to 10. The AMF may decide to initiate UE authentication by invoking an AUSF. The AUSF executes the authentication of the UE as described in TS 33.501. After successful authentication, the AMF initiates the NAS security mode command procedure so that NAS security is established.
+
+Step 12. If the AMF has changed, the new AMF notifies the old AMF that the registration of the UE in the new AMF is completed by invoking the Namf_Communication_RegistrationCompleteNotify service operation.
+
+Step 14. If the PEI was not provided by the UE nor retrieved from the old AMF, the Identity Request procedure is initiated by the AMF to retrieve the PEI. The AMF may then initiate the ME identity check by invoking the N5g-eir_EquipmentIdentityCheck_Get service operation.
+
+Steps 16 to 19. The AMF selects a UDM and registers with the UDM using Nudm_UECM_Registration, retrieves the Access and Mobility Subscription data using Nudm_SDM_Get, and subscribes to be notified of subscription data changes using Nudm_SDM_Subscribe. If the AMF has changed, the old AMF deregisters from the UDM.
+
+Step 21. The AMF may perform an AM Policy Association Establishment with the PCF to retrieve the Access and Mobility policy for the UE, including the RFSP index, the UE-AMBR and the service area restrictions.
+
+Step 22. For each PDU Session in the List Of PDU Sessions To Be Activated, the AMF invokes Nsmf_PDUSession_UpdateSMContext towards the corresponding SMF to activate the user plane connection.
+
+Step 24. The AMF sends a Registration Accept message to the UE indicating that the registration request has been accepted. The 5G-GUTI is included if the AMF allocates a new 5G-GUTI. The Registration Accept also includes the Registration Area, the Mobility restrictions, the PDU Session status, the Allowed NSSAI, the periodic registration update timer, and the LADN Information.
+
+Step 25. The UE sends a Registration Complete message to the AMF when a new 5G-GUTI was assigned, and to acknowledge the successful reception of the negotiated DRX parameters and the LADN information.
+
+4.2.3 Service Request procedures
+
+4.2.3.2 UE Triggered Service Request
+The UE in CM-IDLE state initiates the Service Request procedure in order to send uplink signalling messages, user data, or as a response to a network paging request. After receiving the Service Request message, the AMF may perform authentication. After the establishment of the signalling connection to the AMF, the UE or the network may send signalling messages, for example a PDU Session establishment request, to the SMF via the AMF.
+
+The Service Request procedure includes the following main steps. The UE sends a Service Request to the AMF via the (R)AN, including the List Of PDU Sessions To Be Activated. The AMF invokes Nsmf_PDUSession_UpdateSMContext towards the SMF for each PDU session to be activated. The SMF responds with the N2 SM information containing the CN tunnel information of the UPF. The AMF sends an N2 Request to the (R)AN with the N2 SM information, and the (R)AN performs the RRC reconfiguration with the UE to establish the radio resources. The (R)AN then returns the AN tunnel information to the AMF, which forwards it to the SMF so that the SMF can update the UPF with the downlink tunnel endpoint.
+
+4.2.4 UE Configuration Update procedure
+The UE Configuration Update procedure is used by the AMF to update the UE configuration for access and mobility management related parameters that are decided and provided by the AMF, such as the 5G-GUTI, the TAI list, the Allowed NSSAI, the Configured NSSAI, the service area restrictions and the LADN information. The AMF sends a UE Configuration Update Command and, when acknowledgement is requested, the UE responds with a UE Configuration Update Complete.
+
+4.3 Session Management procedures
+
+4.3.2 PDU Session Establishment
+
+4.3.2.2 UE Requested PDU Session Establishment
+
+4.3.2.2.1 Non-roaming and Roaming with Local Breakout
+The UE Requested PDU Session Establishment procedure comprises the following steps.
+
+Step 1. From the UE to the AMF: a NAS Message containing the S-NSSAI, the DNN, the PDU Session ID, the Request type, the Old PDU Session ID and the N1 SM container carrying the PDU Session Establishment Request. The Request type indicates "Initial request" if the PDU Session Establishment is a request to establish a new PDU Session, and indicates "Existing PDU Session" if the request refers to an existing PDU Session between 3GPP access and non-3GPP access or to a PDU Session handover from an existing PDN connection in EPC.
+
+Step 2. The AMF determines that the message corresponds to a request for a new PDU Session based on the Request type and because the PDU Session ID is not used for any existing PDU Session of the UE. The AMF selects an SMF as described in TS 23.501 clause 6.3.2. The AMF stores the association of the S-NSSAI, the DNN, the PDU Session ID and the SMF ID.
+
+Step 3. From the AMF to the SMF: Nsmf_PDUSession_CreateSMContext Request, carrying the SUPI, the DNN, the S-NSSAI, the PDU Session ID, the AMF ID, the Request Type, the N1 SM container and the User location information.
+
+Step 4. If the Request Type indicates "Initial request", the SMF registers with the UDM using Nudm_UECM_Registration and retrieves the Session Management Subscription data using Nudm_SDM_Get.
+
+Step 5. From the SMF to the AMF: Nsmf_PDUSession_CreateSMContext Response containing the Cause and the SM Context ID.
+
+Step 7. The SMF performs an SM Policy Association Establishment procedure to establish an SM Policy Association with the PCF and to get the default PCC Rules for the PDU Session.
+
+Step 8. If the Request Type indicates "Initial request", the SMF selects one or more UPFs as needed.
+
+Step 9. The SMF performs an SMF initiated SM Policy Association Modification procedure to provide information on the Policy Control Request Trigger conditions that have been met.
+
+Step 10. The SMF initiates the N4 Session Establishment procedure with the selected UPF, providing the Packet detection, enforcement and reporting rules to be installed on the UPF. The UPF acknowledges by sending an N4 Session Establishment Response, which includes the CN tunnel information if the UPF allocates it.
+
+Step 11. From the SMF to the AMF: Namf_Communication_N1N2MessageTransfer containing the PDU Session ID, the N2 SM information and the N1 SM container. The N2 SM information carries the PDU Session ID, the QFI(s), the QoS Profile(s), the CN Tunnel Info, the S-NSSAI and the User Plane Security Enforcement information. The N1 SM container contains the PDU Session Establishment Accept that the AMF shall provide to the UE, including the authorised QoS Rules, the SSC mode, the S-NSSAI, the allocated IPv4 address and the Session-AMBR.
+
+Step 12. From the AMF to the (R)AN: an N2 PDU Session Request carrying the NAS message and the N2 SM information received from the SMF.
+
+Step 13. The (R)AN issues AN specific signalling exchange with the UE that is related to the information received from the SMF, for example an RRCReconfiguration establishing the necessary NG-RAN resources related to the QoS Rules. The (R)AN also allocates the AN Tunnel Info.
+
+Step 14. From the (R)AN to the AMF: an N2 PDU Session Response including the PDU Session ID, the Cause, and the N2 SM information containing the AN Tunnel Info and the List of accepted or rejected QFI(s).
+
+Step 16. The SMF initiates an N4 Session Modification procedure with the UPF, providing the AN Tunnel Info so that downlink packets can be forwarded to the (R)AN.
+
+Step 18. The SMF may invoke Nsmf_PDUSession_SMContextStatusNotify, and after this step the PDU Session is established and both uplink and downlink user data can be exchanged.
+
+4.3.3 PDU Session Modification
+
+4.3.3.1 General
+The PDU Session Modification procedure may be triggered by the UE or by the network. It is used to modify an established PDU Session, for example to add, modify or delete QoS Flows, or to change the Session-AMBR. When the modification is triggered by the UE, the UE sends a PDU Session Modification Request within an UL NAS TRANSPORT message.
+
+4.3.4 PDU Session Release
+The PDU Session Release procedure is used to release all the resources associated with a PDU Session, including the IP address or prefix allocated to the PDU Session, and any UPF resource used by the PDU Session. It can be initiated by the UE, by the SMF, by the AMF, or by the PCF.
+
+4.9 Handover procedures
+
+4.9.1 Xn based inter NG-RAN handover
+This procedure is used when the source and the target NG-RAN nodes are connected via an Xn interface and the AMF is unchanged. The source NG-RAN node initiates the handover by sending a Handover Request to the target NG-RAN node over Xn. Once the target node has accepted, the source node sends the Handover Command to the UE. After the UE has successfully accessed the target cell, the target NG-RAN node sends an N2 Path Switch Request to the AMF, and the AMF invokes Nsmf_PDUSession_UpdateSMContext so that the SMF can switch the downlink user plane path in the UPF.
+
+4.9.2 N2 based inter NG-RAN handover
+The N2 based handover is used when there is no Xn connectivity between the source and the target NG-RAN nodes, when the source NG-RAN node has been configured to use N2 handover, or when the handover requires an AMF change. The procedure is divided into a preparation phase and an execution phase. During the preparation phase, the source NG-RAN sends a Handover Required message to the source AMF, which may relocate to a target AMF, and the target NG-RAN allocates resources and returns a Handover Request Acknowledge.
+
+4.12 Registration via untrusted non-3GPP access
+A UE registering to the 5GC over untrusted non-3GPP access first selects an N3IWF and establishes an IPsec Security Association with it by executing the IKEv2 procedure. NAS messages are then carried between the UE and the AMF over the NWt connection through the N3IWF. The N3IWF forwards the NAS messages to the AMF over the N2 interface.

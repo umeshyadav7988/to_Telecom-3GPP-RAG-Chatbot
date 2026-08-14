@@ -1,0 +1,10 @@
+{
+  "name": "telecom-rag-chatbot",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Root wrapper so Vercel has a single, unambiguous build entrypoint for the frontend workspace.",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev"
+  }
+}

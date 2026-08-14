@@ -1,0 +1,227 @@
+3GPP TS 23.501 V17.9.0
+System architecture for the 5G System (5GS)
+Stage 2
+Release 17
+
+NOTE ON THIS FILE: This is a condensed excerpt prepared for demonstration and
+testing of the retrieval pipeline. It preserves 3GPP clause numbering and
+terminology but is not the complete normative text. For normative use, consult
+the official publication at https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/
+
+1 Scope
+This document defines the Stage 2 system architecture for the 5G System. It describes the network functions of the 5G Core Network, the reference points between them, and the key concepts of the 5GS including network slicing, session management, mobility management and the quality of service framework. The architecture supports both 3GPP access and non-3GPP access to the 5G Core Network.
+
+3 Definitions and abbreviations
+
+3.1 Definitions
+5G Access Network: An access network comprising a NG-RAN and/or non-3GPP access network connecting to a 5G Core Network.
+5G Core Network: The core network specified in the present document. It connects to a 5G Access Network.
+5G System: The 3GPP system consisting of 5G Access Network, 5G Core Network and UE.
+Allowed NSSAI: NSSAI provided by the serving PLMN during a registration procedure, indicating the S-NSSAIs values the UE could use in the serving PLMN for the current registration.
+Network Slice: A logical network that provides specific network capabilities and network characteristics.
+Network Slice instance: A set of Network Function instances and the required resources which form a deployed Network Slice.
+PDU Session: Association between the UE and a Data Network that provides a PDU connectivity service.
+Service based interface: It represents how the services are provided or exposed by a given NF.
+
+4 Architecture model and concepts
+
+4.2 Architecture reference model
+
+4.2.1 General concepts
+The 5G System architecture is defined as service-based, and the interaction between network functions is represented in two ways: a service-based representation, where network functions within the Control Plane enable other authorised network functions to access their services; and a reference point representation, which shows the interaction between the NF services described by point-to-point reference points between any two network functions.
+
+4.2.2 Network Functions and entities
+The 5G System architecture consists of the following network functions:
+- Authentication Server Function (AUSF)
+- Access and Mobility Management Function (AMF)
+- Data Network (DN), e.g. operator services, Internet access or 3rd party services
+- Unstructured Data Storage Function (UDSF)
+- Network Exposure Function (NEF)
+- Network Repository Function (NRF)
+- Network Slice Selection Function (NSSF)
+- Policy Control Function (PCF)
+- Session Management Function (SMF)
+- Unified Data Management (UDM)
+- Unified Data Repository (UDR)
+- User Plane Function (UPF)
+- Application Function (AF)
+- User Equipment (UE)
+- (Radio) Access Network ((R)AN)
+- Security Edge Protection Proxy (SEPP)
+- Network Slice Specific Authentication and Authorization Function (NSSAAF)
+
+4.2.3 Reference points
+The 5G System architecture contains the following reference points:
+N1: Reference point between the UE and the AMF.
+N2: Reference point between the (R)AN and the AMF.
+N3: Reference point between the (R)AN and the UPF.
+N4: Reference point between the SMF and the UPF.
+N6: Reference point between the UPF and a Data Network.
+N9: Reference point between two UPFs.
+N11: Reference point between the AMF and the SMF.
+N12: Reference point between the AMF and the AUSF.
+N8: Reference point between the UDM and the AMF.
+N10: Reference point between the UDM and the SMF.
+N13: Reference point between the UDM and the AUSF.
+N15: Reference point between the PCF and the AMF in the non-roaming scenario.
+
+4.2.4 Service-based interfaces
+The following service-based interfaces are defined:
+Namf: Service-based interface exhibited by AMF.
+Nsmf: Service-based interface exhibited by SMF.
+Nnef: Service-based interface exhibited by NEF.
+Npcf: Service-based interface exhibited by PCF.
+Nudm: Service-based interface exhibited by UDM.
+Naf: Service-based interface exhibited by AF.
+Nnrf: Service-based interface exhibited by NRF.
+Nnssf: Service-based interface exhibited by NSSF.
+Nausf: Service-based interface exhibited by AUSF.
+Nudr: Service-based interface exhibited by UDR.
+
+5 Overall description
+
+5.2 Network function functional description
+
+5.2.1 AMF
+The Access and Mobility Management Function supports the following functionality: termination of the RAN control plane interface N2; termination of NAS signalling on N1 including NAS ciphering and integrity protection; registration management; connection management; reachability management; mobility management; lawful intercept for AMF events; transparent proxy for routing session management messages between the UE and the SMF; access authentication and access authorisation; security anchor functionality (SEAF); and security context management (SCM).
+
+5.2.2 SMF
+The Session Management Function supports session establishment, modification and release including tunnel maintenance between the UPF and the AN node; UE IP address allocation and management including optional authorisation; selection and control of the UPF; configuring traffic steering at the UPF to route traffic to the proper destination; termination of interfaces towards policy control functions; lawful intercept; charging data collection; and downlink data notification.
+
+5.2.3 UPF
+The User Plane Function is the anchor point for intra-RAT and inter-RAT mobility when applicable. It provides an external PDU session point of interconnect to the Data Network, performs packet routing and forwarding, packet inspection, and the user plane part of policy rule enforcement. It also handles lawful intercept of user plane traffic, traffic usage reporting, QoS handling for the user plane including uplink and downlink rate enforcement, uplink traffic verification, downlink packet buffering and downlink data notification triggering.
+
+5.3 Registration management
+
+5.3.2 Registration Management states
+Two RM states are used in the UE and the AMF that reflect the registration status of the UE in the selected PLMN:
+- RM-DEREGISTERED
+- RM-REGISTERED
+
+5.3.2.1 RM-DEREGISTERED state
+In the RM-DEREGISTERED state, the UE is not registered with a network. The UE context in AMF holds no valid location or routing information for the UE, so the UE is not reachable by the AMF. However, some parts of the UE context may still be stored in the UE and the AMF, for example to avoid running an authentication procedure during every registration procedure.
+
+5.3.2.2 RM-REGISTERED state
+In the RM-REGISTERED state, the UE is registered with the network. In the RM-REGISTERED state, the UE can receive services that require registration with the network. The UE shall perform a Mobility Registration Update procedure when the current Tracking Area is not in the list of Tracking Areas that the UE has received from the network, in order to maintain the registration and enable the AMF to page the UE.
+
+5.3.3 Connection management
+
+5.3.3.2 Connection Management states
+Two CM states are used to reflect the NAS signalling connection of the UE with the AMF:
+- CM-IDLE
+- CM-CONNECTED
+
+5.3.3.2.1 CM-IDLE state
+A UE in CM-IDLE state has no NAS signalling connection established with the AMF over N1. The UE performs cell selection, cell reselection and PLMN selection. There is no AN signalling connection, N2 connection or N3 connection for the UE in the CM-IDLE state.
+
+5.3.3.2.2 CM-CONNECTED state
+A UE in CM-CONNECTED state has a NAS signalling connection with the AMF over N1. A NAS signalling connection uses an RRC Connection between the UE and the NG-RAN and an NGAP UE association between the AN and the AMF for 3GPP access.
+
+5.5 UE identifiers
+
+5.5.1 SUPI
+A globally unique Subscription Permanent Identifier shall be allocated to each subscriber in the 5G System and provisioned in the UDM/UDR. The SUPI is used only inside the 3GPP system. The SUPI may contain an IMSI, or a network-specific identifier used for private networks. In order to enable roaming scenarios, the SUPI shall contain the address of the home network. The SUPI shall not be transferred in clear text over the radio interface.
+
+5.5.2 SUCI
+The Subscription Concealed Identifier is a privacy preserving identifier containing the concealed SUPI. The UE shall generate a SUCI using a protection scheme with the home network public key that was securely provisioned to the USIM during the USIM registration.
+
+5.5.3 5G-GUTI
+The 5G Globally Unique Temporary Identifier is allocated by the AMF and is common to both 3GPP access and non-3GPP access. The 5G-GUTI provides an unambiguous identification of the UE that does not reveal the UE or the user permanent identity in the 5G System. The AMF shall assign a new 5G-GUTI to the UE at registration and at least at every mobility registration update.
+
+5.5.4 PEI
+A Permanent Equipment Identifier is defined for the 3GPP UE that accesses the 5G System. The PEI can assume different formats for different UE types and use cases. The UE shall present the PEI to the network together with an indication of the PEI format. If the UE supports at least one 3GPP access technology, the UE shall be allocated a PEI in the IMEI format.
+
+5.6 Session management
+
+5.6.1 Overview
+The 5G Core Network supports a PDU Connectivity Service, that is a service that provides exchange of PDUs between a UE and a Data Network identified by a DNN. The PDU Connectivity Service is supported via PDU Sessions that are established upon UE request. Each PDU Session supports a single PDU Session type, that is, it supports the exchange of a single type of PDU requested by the UE at the establishment of the PDU Session.
+
+5.6.2 PDU Session types
+The following PDU Session types are defined: IPv4, IPv6, IPv4v6, Ethernet and Unstructured. For the IPv4, IPv6 and IPv4v6 PDU Session types, the PDU Session provides IP connectivity. For the Ethernet PDU Session type, neither an IPv4 address nor an IPv6 address is allocated by the network to the UE for that PDU Session. For the Unstructured PDU Session type, the point-to-point tunnelling technique based on UDP/IP encapsulation may be used.
+
+5.6.9 Session and Service Continuity
+The 5G System supports different SSC modes. The SSC mode associated with a PDU Session does not change during the lifetime of a PDU Session.
+- With SSC mode 1, the network preserves the connectivity service provided to the UE. For a PDU Session of IPv4 or IPv6 or IPv4v6 type, the IP address is preserved.
+- With SSC mode 2, the network may release the connectivity service delivered to the UE and release the corresponding PDU Session. For a PDU Session of IPv4 or IPv6 or IPv4v6 type, the network may release the IP address that had been allocated to the UE.
+- With SSC mode 3, changes to the user plane can be visible to the UE, while the network ensures that the UE suffers no loss of connectivity. A connection through a new PDU Session Anchor point is established before the previous connection is terminated in order to allow for better service continuity.
+
+5.7 QoS model
+
+5.7.1 General
+The 5G QoS model is based on QoS Flows. The 5G QoS model supports both QoS Flows that require guaranteed flow bit rate (GBR QoS Flows) and QoS Flows that do not require guaranteed flow bit rate (Non-GBR QoS Flows). The QoS Flow is the finest granularity of QoS differentiation in a PDU Session. A QoS Flow ID is used to identify a QoS Flow in the 5G System. User Plane traffic with the same QFI within a PDU Session receives the same traffic forwarding treatment.
+
+5.7.2 QoS Flow
+Within the 5GS, a QoS Flow is controlled by the SMF and may be preconfigured, or established via the PDU Session Establishment procedure, or the PDU Session Modification procedure. Any QoS Flow is characterised by a QoS profile provided by the SMF to the AN via the AMF over the N2 reference point, one or more QoS rules which can be provided by the SMF to the UE via the AMF over the N1 reference point, and one or more UL and DL PDRs provided by the SMF to the UPF.
+
+5.7.2.1 Default QoS rule
+Each PDU Session of a UE shall have exactly one QoS rule that is the default QoS rule. The default QoS rule is the only QoS rule of a PDU Session that may contain no packet filter set. If the default QoS rule does not contain a packet filter set, the default QoS rule defines the treatment of all packets that do not match any other QoS rule in the PDU Session.
+
+5.7.3 QoS characteristics
+The 5G QoS characteristics associated with a 5QI describe the packet forwarding treatment that a QoS Flow receives edge-to-edge between the UE and the UPF. The following QoS characteristics are defined: Resource Type (Non-GBR, GBR or Delay-critical GBR); Priority Level; Packet Delay Budget; Packet Error Rate; Averaging window (for GBR and Delay-critical GBR resource type only); and Maximum Data Burst Volume (for Delay-critical GBR resource type only).
+
+5.7.3.3 Packet Delay Budget
+The Packet Delay Budget defines an upper bound for the time that a packet may be delayed between the UE and the N6 termination point at the UPF. For a certain 5QI the value of the PDB is the same in UL and DL. In the case of 3GPP access, the PDB is used to support the configuration of scheduling and link layer functions, for example the setting of scheduling priority weights and HARQ target operating points.
+
+5.7.3.4 Packet Error Rate
+The Packet Error Rate defines an upper bound for the rate of PDUs that have been processed by the sender of a link layer protocol but that are not successfully delivered by the corresponding receiver to the upper layer. The PER defines an upper bound for a rate of non-congestion related packet losses.
+
+5.7.4 Standardized 5QI to QoS characteristics mapping
+The following table specifies the standardised 5QI values and the corresponding QoS characteristics.
+
+5QI Value | Resource Type | Default Priority Level | Packet Delay Budget | Packet Error Rate | Example Services
+1 | GBR | 20 | 100 ms | 10^-2 | Conversational Voice
+2 | GBR | 40 | 150 ms | 10^-3 | Conversational Video (Live Streaming)
+3 | GBR | 30 | 50 ms | 10^-3 | Real Time Gaming, V2X messages, Electricity distribution medium voltage
+4 | GBR | 50 | 300 ms | 10^-6 | Non-Conversational Video (Buffered Streaming)
+65 | GBR | 7 | 75 ms | 10^-2 | Mission Critical user plane Push To Talk voice
+66 | GBR | 20 | 100 ms | 10^-2 | Non-Mission-Critical user plane Push To Talk voice
+5 | Non-GBR | 10 | 100 ms | 10^-6 | IMS Signalling
+6 | Non-GBR | 60 | 300 ms | 10^-6 | Video (Buffered Streaming), TCP-based services
+7 | Non-GBR | 70 | 100 ms | 10^-3 | Voice, Video (Live Streaming), Interactive Gaming
+8 | Non-GBR | 80 | 300 ms | 10^-6 | Video (Buffered Streaming), TCP-based services
+9 | Non-GBR | 90 | 300 ms | 10^-6 | Video (Buffered Streaming), TCP-based services; typically used as the default 5QI for the default bearer of a UE for non-privileged subscribers
+82 | Delay-critical GBR | 19 | 10 ms | 10^-4 | Discrete Automation
+83 | Delay-critical GBR | 22 | 10 ms | 10^-4 | Discrete Automation, V2X messages
+84 | Delay-critical GBR | 24 | 30 ms | 10^-5 | Intelligent Transport Systems
+85 | Delay-critical GBR | 21 | 5 ms | 10^-5 | Electricity Distribution high voltage, V2X messages
+
+5.7.5 Reflective QoS
+Reflective QoS enables the UE to map uplink User Plane traffic to QoS Flows without SMF provided QoS rules. Reflective QoS is applicable to IP PDU Session type and Ethernet PDU Session type. Reflective QoS is controlled on per-packet basis by using the Reflective QoS Indication in the encapsulation header on N3 reference point, and by the RQA in the QoS profile.
+
+5.15 Network slicing
+
+5.15.1 General concepts
+A Network Slice is defined within a PLMN and shall include the Core Network Control Plane and User Plane Network Functions and, in the serving PLMN, at least one of the following: the NG Radio Access Network, or the N3IWF functions to the non-3GPP Access Network. Network slices may differ for supported features and network functions optimisations, in which case such Network Slices may have different S-NSSAI with different SST values.
+
+5.15.2 Identification and selection of a Network Slice: the S-NSSAI
+
+5.15.2.1 General
+An S-NSSAI (Single Network Slice Selection Assistance Information) identifies a Network Slice. An S-NSSAI is comprised of a Slice/Service type, which refers to the expected Network Slice behaviour in terms of features and services; and a Slice Differentiator, which is optional information that complements the Slice/Service type to differentiate amongst multiple Network Slices of the same Slice/Service type. The SST field has a length of 8 bits and the SD field has a length of 24 bits.
+
+An S-NSSAI can have standard values or PLMN-specific values. S-NSSAIs with PLMN-specific values are associated to the PLMN ID of the PLMN that assigns it. An S-NSSAI shall not be used by the UE in access stratum procedures in any PLMN other than the one to which the S-NSSAI is associated.
+
+5.15.2.2 Standardised SST values
+Standardised SST values provide a way for establishing global interoperability for slicing so that PLMNs can support the roaming use case more efficiently for the most commonly used Slice/Service Types. The following SST values are standardised:
+SST value 1: eMBB. Slice suitable for the handling of 5G enhanced Mobile Broadband.
+SST value 2: URLLC. Slice suitable for the handling of ultra-reliable low latency communications.
+SST value 3: MIoT. Slice suitable for the handling of massive IoT.
+SST value 4: V2X. Slice suitable for the handling of V2X services.
+SST value 5: HMTC. Slice suitable for the handling of High-Performance Machine-Type Communications.
+
+5.15.4 Allowed NSSAI and Requested NSSAI
+The Requested NSSAI is signalled by the UE to the network in the Registration Request, allowing the network to select the Serving AMF, Network Slice instances and NF instances for this UE. The Allowed NSSAI is provided to the UE by the AMF in the Registration Accept message. The Allowed NSSAI contains the S-NSSAIs the UE is allowed to use in the serving PLMN for the current registration.
+
+The number of S-NSSAIs in the Allowed NSSAI shall not exceed eight. Likewise, the Requested NSSAI shall include at most eight S-NSSAIs.
+
+5.15.5 Network Slice selection
+When a UE registers with a PLMN, if the UE has a Configured NSSAI or an Allowed NSSAI for this PLMN, the UE shall provide to the network in the Registration Request a Requested NSSAI containing the S-NSSAI(s) corresponding to the Network Slice(s) to which the UE wishes to register. The AMF may query the NSSF to obtain the Allowed NSSAI and the target AMF Set, unless the AMF is configured to determine the Network Slice instance itself.
+
+5.16 Support for specific services
+
+5.16.3 Emergency services
+Emergency services are provided to support IMS emergency sessions. The 5GC supports Emergency Registration for UEs that are in limited service state. A UE that is not registered may perform an Emergency Registration to obtain emergency services, in which case the network may accept the registration without authenticating the UE if local regulation permits unauthenticated emergency sessions.
+
+5.17 Interworking and migration
+
+5.17.2 Interworking with EPC
+Interworking between 5GC and EPC is supported through the N26 interface between the AMF and the MME. The N26 interface is an inter-CN interface used for interworking with and without N26. When N26 is supported, the UE context can be transferred between the AMF and the MME, which enables a seamless session continuity for single-registration mode UEs.

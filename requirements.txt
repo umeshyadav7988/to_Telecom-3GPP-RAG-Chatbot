@@ -1,0 +1,20 @@
+# Dependencies for the Vercel Python serverless function (api/index.py).
+#
+# Deliberately smaller than backend/requirements.txt: serverless bundles are
+# size-capped, and the ingest-only readers are imported lazily inside their
+# loader functions, so they are not needed to serve requests over a corpus of
+# .txt/.md files.
+#
+# Add pypdf / python-docx here only if you commit .pdf/.docx specifications
+# into backend/data/corpus/ (they are rebuilt on every cold start).
+#
+# Both LLM SDKs are listed because each is imported lazily inside its own
+# client class, so the unused one costs bundle size but never import time.
+# Delete whichever provider you are not deploying with to shrink the bundle.
+
+Flask==3.0.3
+flask-cors==4.0.1
+python-dotenv==1.0.1
+numpy>=1.26.0
+google-genai>=1.0.0
+anthropic>=0.69.0

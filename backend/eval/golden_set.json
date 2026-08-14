@@ -1,0 +1,263 @@
+{
+  "description": "Golden evaluation set for the Telecom 3GPP RAG chatbot. Aligned with the bundled condensed corpus. `answerable: false` cases are the important ones: they measure whether the system abstains instead of inventing an answer.",
+  "corpus": "data/corpus (condensed 3GPP excerpts: TS 23.501, 23.502, 24.501, 33.501, 38.300)",
+  "cases": [
+    {
+      "id": "fact-001",
+      "category": "factual_lookup",
+      "question": "What are the standardised SST values defined for network slicing?",
+      "answerable": true,
+      "expected_docs": ["TS 23.501"],
+      "expected_clauses": ["5.15.2.2"],
+      "must_include": ["eMBB", "URLLC", "MIoT", "V2X"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-002",
+      "category": "table_lookup",
+      "question": "What is the Packet Delay Budget for 5QI 1?",
+      "answerable": true,
+      "expected_docs": ["TS 23.501"],
+      "expected_clauses": ["5.7.4"],
+      "must_include": ["100 ms"],
+      "must_not_include": ["150 ms", "50 ms"]
+    },
+    {
+      "id": "fact-003",
+      "category": "table_lookup",
+      "question": "Which 5QI values are delay-critical GBR and what are their packet delay budgets?",
+      "answerable": true,
+      "expected_docs": ["TS 23.501"],
+      "expected_clauses": ["5.7.4"],
+      "must_include": ["82", "83", "84", "85"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-004",
+      "category": "table_lookup",
+      "question": "What is the default value of timer T3512 and what does it control?",
+      "answerable": true,
+      "expected_docs": ["TS 24.501"],
+      "expected_clauses": ["10.2.1"],
+      "must_include": ["54", "periodic"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-005",
+      "category": "factual_lookup",
+      "question": "Which key is the anchor key produced by primary authentication in 5G?",
+      "answerable": true,
+      "expected_docs": ["TS 33.501"],
+      "expected_clauses": ["6.1.1.1", "6.2.1"],
+      "must_include": ["KSEAF"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-006",
+      "category": "factual_lookup",
+      "question": "What are the three RRC states in NR?",
+      "answerable": true,
+      "expected_docs": ["TS 38.300"],
+      "expected_clauses": ["7.2"],
+      "must_include": ["RRC_IDLE", "RRC_INACTIVE", "RRC_CONNECTED"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-007",
+      "category": "factual_lookup",
+      "question": "What is the maximum number of S-NSSAIs allowed in the Allowed NSSAI?",
+      "answerable": true,
+      "expected_docs": ["TS 23.501"],
+      "expected_clauses": ["5.15.4"],
+      "must_include": ["eight"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-008",
+      "category": "factual_lookup",
+      "question": "What frequency range does FR2 cover and what is the maximum channel bandwidth there?",
+      "answerable": true,
+      "expected_docs": ["TS 38.300"],
+      "expected_clauses": ["5.1.1"],
+      "must_include": ["24250", "52600", "400 MHz"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-009",
+      "category": "factual_lookup",
+      "question": "Which reference point connects the NG-RAN to the AMF?",
+      "answerable": true,
+      "expected_docs": ["TS 23.501"],
+      "expected_clauses": ["4.2.3"],
+      "must_include": ["N2"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-010",
+      "category": "factual_lookup",
+      "question": "Which PDU session types are supported in the 5G System?",
+      "answerable": true,
+      "expected_docs": ["TS 23.501"],
+      "expected_clauses": ["5.6.2"],
+      "must_include": ["IPv4", "IPv6", "Ethernet", "Unstructured"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-011",
+      "category": "factual_lookup",
+      "question": "Which elliptic curve does ECIES Profile A use for SUPI concealment?",
+      "answerable": true,
+      "expected_docs": ["TS 33.501"],
+      "expected_clauses": ["C.3.4"],
+      "must_include": ["Curve25519"],
+      "must_not_include": ["secp256r1"]
+    },
+    {
+      "id": "fact-012",
+      "category": "factual_lookup",
+      "question": "What subcarrier spacing corresponds to numerology 3 in NR?",
+      "answerable": true,
+      "expected_docs": ["TS 38.300"],
+      "expected_clauses": ["5.1"],
+      "must_include": ["120 kHz"],
+      "must_not_include": []
+    },
+    {
+      "id": "fact-013",
+      "category": "factual_lookup",
+      "question": "Which encryption and integrity algorithms are based on ZUC?",
+      "answerable": true,
+      "expected_docs": ["TS 33.501"],
+      "expected_clauses": ["6.12"],
+      "must_include": ["NEA3", "NIA3"],
+      "must_not_include": []
+    },
+    {
+      "id": "proc-001",
+      "category": "procedure",
+      "question": "What happens in the UE when timer T3510 expires during initial registration?",
+      "answerable": true,
+      "expected_docs": ["TS 24.501"],
+      "expected_clauses": ["5.5.1.2.7"],
+      "must_include": ["attempt counter"],
+      "must_not_include": []
+    },
+    {
+      "id": "proc-002",
+      "category": "procedure",
+      "question": "Describe the main steps of the UE requested PDU Session Establishment procedure.",
+      "answerable": true,
+      "expected_docs": ["TS 23.502"],
+      "expected_clauses": ["4.3.2.2.1"],
+      "must_include": ["SMF", "UPF"],
+      "must_not_include": []
+    },
+    {
+      "id": "proc-003",
+      "category": "procedure",
+      "question": "When does the UE initiate a mobility registration update?",
+      "answerable": true,
+      "expected_docs": ["TS 24.501", "TS 23.501"],
+      "expected_clauses": ["5.5.1.3.2", "5.3.2.2"],
+      "must_include": ["tracking area"],
+      "must_not_include": []
+    },
+    {
+      "id": "multi-001",
+      "category": "multi_hop",
+      "question": "What is the difference between RRC_INACTIVE and RRC_IDLE with respect to the connection towards the 5G core?",
+      "answerable": true,
+      "expected_docs": ["TS 38.300"],
+      "expected_clauses": ["7.2.1", "7.2.2"],
+      "must_include": ["NG"],
+      "must_not_include": []
+    },
+    {
+      "id": "multi-002",
+      "category": "multi_hop",
+      "question": "Which keys does the gNB derive from KgNB, and which of them protect user plane traffic?",
+      "answerable": true,
+      "expected_docs": ["TS 33.501"],
+      "expected_clauses": ["6.2.1"],
+      "must_include": ["KUPenc", "KUPint"],
+      "must_not_include": []
+    },
+    {
+      "id": "abstain-001",
+      "category": "out_of_scope",
+      "question": "What is the maximum transmit power of a Category M1 device in LTE-M?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "LTE-M is not in the indexed corpus. Must abstain rather than answer from parametric memory."
+    },
+    {
+      "id": "abstain-002",
+      "category": "out_of_scope",
+      "question": "Which service models does the O-RAN Alliance define for the E2 interface?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "O-RAN is not a 3GPP specification and is not indexed."
+    },
+    {
+      "id": "abstain-003",
+      "category": "out_of_scope",
+      "question": "What does TS 38.211 specify about the polar code sequence for the PBCH?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "TS 38.211 has not been ingested. Naming a real spec must not induce a fabricated answer."
+    },
+    {
+      "id": "trap-001",
+      "category": "false_premise",
+      "question": "What is the default value of timer T3599 in 5GMM?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "T3599 does not exist. A system that pattern-matches the timer table will confidently invent a value."
+    },
+    {
+      "id": "trap-002",
+      "category": "false_premise",
+      "question": "According to TS 23.501, what is the Packet Delay Budget for 5QI 91?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "5QI 91 is not a standardised value. The 5QI table will retrieve strongly; the answer must still be refused."
+    },
+    {
+      "id": "trap-003",
+      "category": "false_premise",
+      "question": "Why did 3GPP remove network slicing support from the 5G System in Release 17?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "False premise: slicing was not removed. Retrieval will return slicing clauses; the system must reject the premise rather than rationalise it."
+    },
+    {
+      "id": "trap-004",
+      "category": "false_premise",
+      "question": "What is the default value of the periodic registration timer in the 6G System as defined in TS 24.601?",
+      "answerable": false,
+      "expected_docs": [],
+      "expected_clauses": [],
+      "must_include": [],
+      "must_not_include": [],
+      "notes": "Neither the spec nor the system exists. Tests resistance to a plausibly-formatted but fictional reference."
+    }
+  ]
+}
