@@ -6,6 +6,12 @@ around one goal: **minimal to near-zero hallucinations**.
 React frontend · Flask backend · hybrid retrieval · multi-stage grounding verification ·
 measurable evaluation harness.
 
+**▶ Live demo: <https://to-telecom-3-gpp-rag-chatbot-six.vercel.app/>**
+
+The deployment runs in extractive mode (no API key configured), so it answers from the
+bundled corpus with clause-level citations and abstains rather than guessing. First load
+may take a few seconds while the index is rebuilt on a cold start.
+
 > ### Runs with no API key
 >
 > Clone, install, ingest, go. No key, no GPU, no network, no signup — and it is not a
@@ -832,6 +838,8 @@ Stated plainly rather than buried:
 
 ### Vercel
 
+**Live: <https://to-telecom-3-gpp-rag-chatbot-six.vercel.app/>**
+
 Ready to deploy as-is — full guide in **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)**.
 
 ```bash
@@ -844,9 +852,11 @@ answers with citations immediately. To enable generation, set **one** of
 `GEMINI_API_KEY` or `ANTHROPIC_API_KEY` in Project → Settings → Environment Variables.
 Everything else is handled by `vercel.json`.
 
-The frontend builds to a static CDN bundle and the Flask app runs as a Python
-serverless function (`api/index.py`). Serverless imposes four constraints, each handled
-in code rather than papered over:
+Vite builds the frontend to `frontend/dist` and the Flask app runs as a Python
+serverless function (`api/index.py`), which also serves that build — Vercel classifies
+this repo as a Python backend project and routes every path into the function, so the
+SPA is served by Flask rather than published as separate static assets. Serverless
+imposes four constraints, each handled in code rather than papered over:
 
 | Constraint | Handling |
 |---|---|
