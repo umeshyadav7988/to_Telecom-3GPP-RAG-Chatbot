@@ -1,10 +1,10 @@
 # Dependencies for the Vercel Python serverless function (api/index.py).
 #
-# Kept HERE and not at the repo root on purpose: a root requirements.txt makes
-# Vercel detect the whole repo as a Python backend-framework project, which
-# overrides the Vite build (buildCommand -> frontend/dist) declared in
-# vercel.json. Next to the entrypoint, @vercel/python still installs it for the
-# function while the root stays a plain static/Node build.
+# Must live at the REPO ROOT, not next to api/index.py. Vercel CLI 58 resolves
+# Python dependencies once per project with uv, before the build command runs,
+# and only looks at the root for a manifest. With this file under api/ the build
+# logs "No Python manifest found; creating an empty pyproject.toml" and the
+# function then boots with no Flask -> ModuleNotFoundError at import time.
 #
 # Deliberately smaller than backend/requirements.txt: serverless bundles are
 # size-capped, and the ingest-only readers are imported lazily inside their
